@@ -2,12 +2,13 @@ package com.example.jh.recycleviewdemo;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.jh.recycleviewdemo.adapter.HomeAdapter;
+import com.example.jh.recycleviewdemo.divider.MyDividerItemDecoration;
+import com.example.jh.recycleviewdemo.divider.SimpleDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +34,8 @@ import butterknife.ButterKnife;
  // 设置Item增加、移除动画
  recycleView.setItemAnimator(new DefaultItemAnimator());
  // 添加分割线
- recycleView.addItemDecoration(new DividerItemDecoration(
- getActivity(), DividerItemDecoration.HORIZONTAL_LIST));
+ recycleView.addItemDecoration(new MyDividerItemDecoration(
+ getActivity(), MyDividerItemDecoration.HORIZONTAL_LIST));
  */
 
 /**
@@ -43,11 +44,15 @@ import butterknife.ButterKnife;
  * 那么就必须解释下RecyclerView的这个名字了，从它类名上看，
  * RecyclerView代表的意义是，我只管Recycler View，也就是说RecyclerView只管回收与复用View，其他的你可以自己去设置。
  * 可以看出其高度的解耦，给予你充分的定制自由（所以你才可以轻松的通过这个控件实现ListView,GirdView，瀑布流等效果）。
+ *
+ * 添加分割线：
+ * 看起来好丑，Item间应该有个分割线，当你去找时，你会发现RecyclerView并没有支持divider这样的属性。
+ * 那么怎么办，你可以给Item的布局去设置margin，当然了这种方式不够优雅，我们文章开始说了，我们可以自由的去定制它，当然我们的分割线也是可以定制的。
  */
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.recycleView)
-    RecyclerView recycleView;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
 
     private List<String> mDatas;
     private HomeAdapter mAdapter;
@@ -58,10 +63,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initData();
-        recycleView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new HomeAdapter(mDatas, this);
-        recycleView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
 
+        // 系统分割线
+//        recycleView.addItemDecoration(new MyDividerItemDecoration(this,
+//                MyDividerItemDecoration.VERTICAL_LIST));
+        // 自定义分割线
+        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
     }
 
     private void initData() {
