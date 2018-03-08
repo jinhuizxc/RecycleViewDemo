@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.jh.recycleviewdemo.R;
+import com.example.jh.recycleviewdemo.StaggeredGridLayoutActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,15 +18,29 @@ import java.util.List;
  * Email:1004260403@qq.com
  */
 
-public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>{
+public class StaggeredHomeAdapter extends RecyclerView.Adapter<StaggeredHomeAdapter.MyViewHolder> {
 
     private List<String> mDatas;
-    private Context context;
+    private LayoutInflater mInflater;
+    // 设置随机高度
+    private List<Integer> mHeights;
+
     private OnItemClickLitener mOnItemClickLitener;
+
+    public StaggeredHomeAdapter(Context context, List<String> datas) {
+        mInflater = LayoutInflater.from(context);
+        mDatas = datas;
+
+        mHeights = new ArrayList<Integer>();
+        for (int i = 0; i < mDatas.size(); i++) {
+            mHeights.add((int) (100 + Math.random() * 300));
+        }
+    }
 
     public void setmOnItemClickLitener(OnItemClickLitener mOnItemClickLitener) {
         this.mOnItemClickLitener = mOnItemClickLitener;
     }
+
 
     public interface OnItemClickLitener {
         void onItemClick(View view, int position);
@@ -32,22 +48,19 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>{
         void onItemLongClick(View view, int position);
     }
 
-    public HomeAdapter(List<String> mDatas, Context context) {
-        this.mDatas = mDatas;
-        this.context = context;
+    @Override
+    public StaggeredHomeAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new MyViewHolder(mInflater.inflate(
+                R.layout.item_staggered_home, parent, false));
     }
 
     @Override
-    public HomeAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public void onBindViewHolder(final StaggeredHomeAdapter.MyViewHolder holder, int position) {
+        ViewGroup.LayoutParams lp = holder.tv.getLayoutParams();
+        lp.height = mHeights.get(position);
 
-        return new MyViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.item_home, parent, false));
-    }
-
-    @Override
-    public void onBindViewHolder(final HomeAdapter.MyViewHolder holder, int position) {
-        holder.textView.setText(mDatas.get(position));
-
+        holder.tv.setLayoutParams(lp);
+        holder.tv.setText(mDatas.get(position));
         // 如果设置了回调，则设置点击事件
         if (mOnItemClickLitener != null) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -68,25 +81,20 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>{
                 }
             });
         }
-
-    }
-
-    @Override
-    public int getItemCount() {
-        return mDatas.size();
     }
 
     /**
-     * 添加一条数据
+     * 添加一个数据
      * @param position
      */
     public void addData(int position) {
         mDatas.add(position, "Insert One");
+        mHeights.add((int) (100 + Math.random() * 300));
         notifyItemInserted(position);
     }
 
     /**
-     * 移除一条数据
+     * 移除一个数据
      * @param position
      */
     public void removeData(int position) {
@@ -94,13 +102,19 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder>{
         notifyItemRemoved(position);
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public int getItemCount() {
+        return mDatas.size();
+    }
 
-        TextView textView;
-        public MyViewHolder(View itemView) {
-            super(itemView);
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
-            textView = itemView.findViewById(R.id.tv_num);
+        TextView tv;
+
+        public MyViewHolder(View view) {
+            super(view);
+            tv = (TextView) view.findViewById(R.id.id_num);
+
         }
     }
 }
