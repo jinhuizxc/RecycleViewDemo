@@ -37,4 +37,10 @@
         android:title="StaggeredGridView"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/id_checkpoint"
+        android:orderInCategory="100"
+        android:title="闯关效果图"
+        app:showAsAction="never"/>
+
 </menu>

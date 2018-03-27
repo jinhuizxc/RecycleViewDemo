@@ -10,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,23 +54,22 @@ import butterknife.ButterKnife;
  * 那么就必须解释下RecyclerView的这个名字了，从它类名上看，
  * RecyclerView代表的意义是，我只管Recycler View，也就是说RecyclerView只管回收与复用View，其他的你可以自己去设置。
  * 可以看出其高度的解耦，给予你充分的定制自由（所以你才可以轻松的通过这个控件实现ListView,GirdView，瀑布流等效果）。
- *
+ * <p>
  * 添加分割线：
  * 看起来好丑，Item间应该有个分割线，当你去找时，你会发现RecyclerView并没有支持divider这样的属性。
  * 那么怎么办，你可以给Item的布局去设置margin，当然了这种方式不够优雅，我们文章开始说了，我们可以自由的去定制它，当然我们的分割线也是可以定制的。
- *
+ * <p>
  * LayoutManager:
  * 上面实现了类似ListView样子的Demo，通过使用其默认的LinearLayoutManagerLinearLayoutManager:
- *
+ * <p>
  * RecyclerView.LayoutManager吧，这是一个抽象类，好在系统提供了3个实现类：
  * LinearLayoutManager 现行管理器，支持横向、纵向。
  * GridLayoutManager 网格布局管理器
  * StaggeredGridLayoutManager 瀑布就式布局管理器
- *
- *
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
@@ -87,8 +87,9 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new HomeAdapter(mDatas, this);
         recyclerView.setAdapter(mAdapter);
 
-        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(4,
-                StaggeredGridLayoutManager.VERTICAL));
+//        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(4,
+//                StaggeredGridLayoutManager.VERTICAL));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter);
 
         // 添加分割线
@@ -106,6 +107,10 @@ public class MainActivity extends AppCompatActivity {
 
         // 处理事件
         initEvent();
+
+        // 滚动到指定位置
+        recyclerView.scrollToPosition(mDatas.size() -1 );
+
 
     }
 
@@ -165,6 +170,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.id_action_staggeredgridview:
                 Intent intent = new Intent(this, StaggeredGridLayoutActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.id_checkpoint:
+                startActivity(new Intent(this, CheckPointActivity.class));
                 break;
         }
         return true;
